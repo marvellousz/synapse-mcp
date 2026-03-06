@@ -30,7 +30,7 @@ Exposes the following tools to AI models:
    python server.py
    ```
 
-## 🔌 Connecting to Claude Desktop
+## Connecting to Claude Desktop
 
 Add this to your Claude Desktop configuration file:
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
