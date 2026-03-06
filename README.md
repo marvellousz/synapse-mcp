@@ -47,6 +47,58 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
+## Connecting to Cursor
+
+1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`).
+2. Go to **Features** > **MCP Servers**.
+3. Click **+ Add MCP Server**.
+4. Set **Name** to `Synapse` and **Type** to `command`.
+5. Enter the command:
+   ```bash
+   python /home/pranav/work/synapse/mcp/server.py
+   ```
+
+## Connecting to VS Code (Cline / Continue)
+
+Most VS Code AI extensions support MCP:
+
+### Cline
+1. Open Cline settings.
+2. Under "MCP Servers", click **Add Server**.
+3. Name: `synapse`, Command: `python`, Args: `["/home/pranav/work/synapse/mcp/server.py"]`.
+
+### Continue
+Add to your `config.json`:
+```json
+"contextProviders": [
+  {
+    "name": "mcp",
+    "options": {
+      "command": "python",
+      "args": ["/home/pranav/work/synapse/mcp/server.py"]
+    }
+  }
+]
+```
+
+## Connecting to Claude Code (CLI)
+
+Run Claude Code with the Synapse MCP server attached:
+```bash
+claude --mcp-path /home/pranav/work/synapse/mcp/server.py
+```
+
+## Connecting to Antigravity / Codex
+
+As an agentic AI, you can point my configuration to this server. Ensure the absolute path to `server.py` is used in the `mcpServers` section of the agent config.
+
+## Gemini CLI Support
+
+Use the MCP server with the Gemini developer CLI:
+```bash
+gemini-cli --mcp-server "python /home/pranav/work/synapse/mcp/server.py"
+```
+
 ## Architecture
 
 The MCP server acts as an adapter layer:
