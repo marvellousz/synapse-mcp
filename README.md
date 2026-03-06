@@ -2,7 +2,7 @@
 
 This is the Model Context Protocol (MCP) server for Synapse. It allows AI assistants like Claude Desktop to interact directly with your "Second Brain".
 
-## 🚀 Features
+## Features
 
 Exposes the following tools to AI models:
 - `search_memories`: Semantic search across your saved knowledge.
@@ -11,7 +11,7 @@ Exposes the following tools to AI models:
 - `ask_synapse`: RAG-powered chat grounded in your personal context.
 - `list_recent_memories`: Overview of your latest captures.
 
-## 🛠️ Setup
+## Setup
 
 1. **Install Dependencies**:
    ```bash
@@ -47,7 +47,7 @@ Add this to your Claude Desktop configuration file:
 }
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 The MCP server acts as an adapter layer:
 `AI Client (Claude) <-> MCP Server <-> Synapse Backend API <-> Postgres/Gemini`
