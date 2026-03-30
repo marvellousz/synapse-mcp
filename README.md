@@ -1,105 +1,84 @@
-# Synapse MCP Server
+# synapse mcp server
 
-This is the Model Context Protocol (MCP) server for Synapse. It allows AI assistants like Claude Desktop to interact directly with your "Second Brain".
+Basic MCP server that connects AI clients to your Synapse backend API.
 
-## Features
+## tools exposed
 
-Exposes the following tools to AI models:
-- `search_memories`: Semantic search across your saved knowledge.
-- `get_memory`: Fetch full details of a specific memory.
-- `create_memory`: Save new notes or links directly from the chat.
-- `ask_synapse`: RAG-powered chat grounded in your personal context.
-- `list_recent_memories`: Overview of your latest captures.
+- health_check
+- search_memories
+- list_recent_memories
+- get_memory
+- create_memory
+- ask_synapse
 
-## Setup
+## setup
 
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+1. Install dependencies
 
-2. **Configure Environment**:
-   Copy `.env.example` to `.env` and fill in your details.
-   ```bash
-   cp .env.example .env
-   ```
-   *Note: You can get your API Token from the web app's local storage (synapse_token).*
+```bash
+cd /home/pranav/work/synapse/mcp
+pip install -r requirements.txt
+```
 
-3. **Run the Server**:
-   ```bash
-   python server.py
-   ```
+2. Configure environment
 
-## Connecting to Claude Desktop
+```bash
+cp .env.example .env
+```
 
-Add this to your Claude Desktop configuration file:
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+Set values in .env:
+
+- SYNAPSE_API_URL: backend URL, example http://localhost:8000
+- SYNAPSE_API_TOKEN: user JWT token from Synapse login
+- SYNAPSE_API_TIMEOUT: optional, default 15 seconds
+
+3. Run server
+
+```bash
+python server.py
+```
+
+## basic manual verification
+
+After attaching this MCP server in your client (Claude/Cursor/VS Code), call tools in this order:
+
+1. health_check
+- Expected: backend ok and token_configured true.
+
+2. list_recent_memories with limit 3
+- Expected: ok true and memory list in data.
+
+3. search_memories with a known query
+- Expected: ok true and search results in data.
+
+4. create_memory
+- Example inputs:
+  - memory_type: text
+  - title: MCP smoke memory
+  - text_content: created from mcp
+- Expected: ok true and created memory in data.
+
+5. get_memory with the id returned from create_memory
+- Expected: same memory details.
+
+6. ask_synapse with a simple question
+- Expected: ok true and reply payload in data.
+
+If any tool returns ok false:
+
+- Check SYNAPSE_API_URL
+- Check SYNAPSE_API_TOKEN validity
+- Check backend logs for endpoint errors
+
+## claude desktop config example
 
 ```json
 {
   "mcpServers": {
     "synapse": {
       "command": "python",
-      "args": ["/absolute/path/to/synapse/mcp/server.py"]
+      "args": ["/home/pranav/work/synapse/mcp/server.py"]
     }
   }
 }
 ```
-
-## Connecting to Cursor
-
-1. Open **Cursor Settings** (`Cmd/Ctrl + Shift + J`).
-2. Go to **Features** > **MCP Servers**.
-3. Click **+ Add MCP Server**.
-4. Set **Name** to `Synapse` and **Type** to `command`.
-5. Enter the command:
-   ```bash
-   python /home/pranav/work/synapse/mcp/server.py
-   ```
-
-## Connecting to VS Code (Cline / Continue)
-
-Most VS Code AI extensions support MCP:
-
-### Cline
-1. Open Cline settings.
-2. Under "MCP Servers", click **Add Server**.
-3. Name: `synapse`, Command: `python`, Args: `["/home/pranav/work/synapse/mcp/server.py"]`.
-
-### Continue
-Add to your `config.json`:
-```json
-"contextProviders": [
-  {
-    "name": "mcp",
-    "options": {
-      "command": "python",
-      "args": ["/home/pranav/work/synapse/mcp/server.py"]
-    }
-  }
-]
-```
-
-## Connecting to Claude Code (CLI)
-
-Run Claude Code with the Synapse MCP server attached:
-```bash
-claude --mcp-path /home/pranav/work/synapse/mcp/server.py
-```
-
-## Connecting to Antigravity / Codex
-
-As an agentic AI, you can point my configuration to this server. Ensure the absolute path to `server.py` is used in the `mcpServers` section of the agent config.
-
-## Gemini CLI Support
-
-Use the MCP server with the Gemini developer CLI:
-```bash
-gemini-cli --mcp-server "python /home/pranav/work/synapse/mcp/server.py"
-```
-
-## Architecture
-
-The MCP server acts as an adapter layer:
-`AI Client (Claude) <-> MCP Server <-> Synapse Backend API <-> Postgres/Gemini`
