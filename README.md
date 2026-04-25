@@ -64,6 +64,8 @@ After attaching this MCP server in your client (Claude/Cursor/VS Code), call too
 6. ask_synapse with a simple question
 - Expected: ok true and reply payload in data.
 
+You can also call `ask_synapse` with `use_internet: true` to let the backend add web context to the answer when needed.
+
 If any tool returns ok false:
 
 - Check SYNAPSE_API_URL

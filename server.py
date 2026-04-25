@@ -130,12 +130,16 @@ def create_memory(
 
 
 @mcp.tool()
-def ask_synapse(question: str) -> Dict[str, Any]:
+def ask_synapse(question: str, use_internet: bool = False) -> Dict[str, Any]:
     """Ask a RAG chat question grounded in Synapse memories."""
     message = (question or "").strip()
     if not message:
         return {"ok": False, "error": "question cannot be empty"}
-    return _api_request("POST", "/api/chat", json={"message": message, "history": []})
+    return _api_request(
+        "POST",
+        "/api/chat",
+        json={"message": message, "history": [], "useInternet": use_internet},
+    )
 
 
 if __name__ == "__main__":
